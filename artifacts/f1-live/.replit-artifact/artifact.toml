@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "F1 Live Telecronaca"
+version = "1.0.0"
+id = "artifacts/f1-live"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24755
+
+[services.development]
+run = "pnpm --filter @workspace/f1-live run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/f1-live", "run", "build" ]
+publicDir = "artifacts/f1-live/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24755"
+BASE_PATH = "/"

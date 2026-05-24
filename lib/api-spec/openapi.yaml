@@ -1,22 +1,27 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: F1 Live Telecronaca API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: races
+  - name: drivers
+  - name: teams
+  - name: laps
+  - name: commentary
+  - name: race-control
+  - name: standings
+  - name: tires
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,538 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /races:
+    get:
+      operationId: listRaces
+      tags: [races]
+      summary: List all races
+      responses:
+        "200":
+          description: List of races
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Race"
+    post:
+      operationId: createRace
+      tags: [races]
+      summary: Create a race (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RaceInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Race"
+
+  /races/live:
+    get:
+      operationId: getLiveRace
+      tags: [races]
+      summary: Get current live race summary
+      responses:
+        "200":
+          description: Live race or null
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LiveRaceSummary"
+
+  /races/{id}:
+    get:
+      operationId: getRace
+      tags: [races]
+      summary: Get race by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Race detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Race"
+    patch:
+      operationId: updateRace
+      tags: [races]
+      summary: Update a race (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RaceUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Race"
+    delete:
+      operationId: deleteRace
+      tags: [races]
+      summary: Delete a race (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /races/{id}/summary:
+    get:
+      operationId: getRaceSummary
+      tags: [races]
+      summary: Get race stats summary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Race summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RaceSummary"
+
+  /drivers:
+    get:
+      operationId: listDrivers
+      tags: [drivers]
+      summary: List all drivers
+      responses:
+        "200":
+          description: List of drivers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Driver"
+    post:
+      operationId: createDriver
+      tags: [drivers]
+      summary: Create a driver (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DriverInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+
+  /drivers/{id}:
+    get:
+      operationId: getDriver
+      tags: [drivers]
+      summary: Get driver by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Driver
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+    patch:
+      operationId: updateDriver
+      tags: [drivers]
+      summary: Update a driver (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DriverUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Driver"
+    delete:
+      operationId: deleteDriver
+      tags: [drivers]
+      summary: Delete a driver (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /teams:
+    get:
+      operationId: listTeams
+      tags: [teams]
+      summary: List all teams
+      responses:
+        "200":
+          description: List of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+    post:
+      operationId: createTeam
+      tags: [teams]
+      summary: Create a team (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+
+  /teams/{id}:
+    patch:
+      operationId: updateTeam
+      tags: [teams]
+      summary: Update a team (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+    delete:
+      operationId: deleteTeam
+      tags: [teams]
+      summary: Delete a team (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /races/{id}/laps:
+    get:
+      operationId: listLaps
+      tags: [laps]
+      summary: List lap times for a race
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lap times
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LapTime"
+    post:
+      operationId: addLap
+      tags: [laps]
+      summary: Add a lap time (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LapTimeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LapTime"
+
+  /races/{id}/laps/latest:
+    get:
+      operationId: getLatestPositions
+      tags: [laps]
+      summary: Get latest timing tower positions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Current positions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DriverPosition"
+
+  /races/{id}/commentary:
+    get:
+      operationId: listCommentary
+      tags: [commentary]
+      summary: List commentary for a race
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Commentary entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Commentary"
+    post:
+      operationId: addCommentary
+      tags: [commentary]
+      summary: Add commentary entry (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentaryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Commentary"
+
+  /commentary/{id}:
+    delete:
+      operationId: deleteCommentary
+      tags: [commentary]
+      summary: Delete a commentary entry (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /races/{id}/race-control:
+    get:
+      operationId: listRaceControl
+      tags: [race-control]
+      summary: List race control messages for a race
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Race control messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RaceControlMessage"
+    post:
+      operationId: addRaceControl
+      tags: [race-control]
+      summary: Post race control message (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RaceControlInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RaceControlMessage"
+
+  /standings/drivers:
+    get:
+      operationId: listDriverStandings
+      tags: [standings]
+      summary: Get driver standings
+      responses:
+        "200":
+          description: Driver standings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DriverStanding"
+
+  /standings/constructors:
+    get:
+      operationId: listConstructorStandings
+      tags: [standings]
+      summary: Get constructor standings
+      responses:
+        "200":
+          description: Constructor standings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConstructorStanding"
+
+  /standings/summary:
+    get:
+      operationId: getSeasonSummary
+      tags: [standings]
+      summary: Get season summary stats
+      responses:
+        "200":
+          description: Season summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeasonSummary"
+
+  /races/{id}/tires:
+    get:
+      operationId: listTireStrategies
+      tags: [tires]
+      summary: List tire strategies for a race
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tire strategies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TireStrategy"
+    post:
+      operationId: addTireStrategy
+      tags: [tires]
+      summary: Add tire stint (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TireStrategyInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TireStrategy"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +568,506 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    Race:
+      type: object
+      required: [id, name, circuit, country, round, season, status, raceDate]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        circuit:
+          type: string
+        country:
+          type: string
+        round:
+          type: integer
+        season:
+          type: integer
+        status:
+          type: string
+          enum: [upcoming, practice, qualifying, race, finished]
+        raceDate:
+          type: string
+        currentLap:
+          type: ["integer", "null"]
+        totalLaps:
+          type: ["integer", "null"]
+        weatherCondition:
+          type: ["string", "null"]
+        trackTemp:
+          type: ["number", "null"]
+        airTemp:
+          type: ["number", "null"]
+        safetyCarDeployed:
+          type: boolean
+        vscDeployed:
+          type: boolean
+
+    RaceInput:
+      type: object
+      required: [name, circuit, country, round, season, raceDate]
+      properties:
+        name:
+          type: string
+        circuit:
+          type: string
+        country:
+          type: string
+        round:
+          type: integer
+        season:
+          type: integer
+        raceDate:
+          type: string
+        totalLaps:
+          type: ["integer", "null"]
+        weatherCondition:
+          type: ["string", "null"]
+        trackTemp:
+          type: ["number", "null"]
+        airTemp:
+          type: ["number", "null"]
+
+    RaceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        circuit:
+          type: string
+        country:
+          type: string
+        round:
+          type: integer
+        raceDate:
+          type: string
+        status:
+          type: string
+          enum: [upcoming, practice, qualifying, race, finished]
+        currentLap:
+          type: ["integer", "null"]
+        totalLaps:
+          type: ["integer", "null"]
+        weatherCondition:
+          type: ["string", "null"]
+        trackTemp:
+          type: ["number", "null"]
+        airTemp:
+          type: ["number", "null"]
+        safetyCarDeployed:
+          type: boolean
+        vscDeployed:
+          type: boolean
+
+    LiveRaceSummary:
+      type: object
+      required: [hasLiveRace]
+      properties:
+        hasLiveRace:
+          type: boolean
+        race:
+          $ref: "#/components/schemas/Race"
+        leader:
+          $ref: "#/components/schemas/Driver"
+        positions:
+          type: array
+          items:
+            $ref: "#/components/schemas/DriverPosition"
+        latestCommentary:
+          type: array
+          items:
+            $ref: "#/components/schemas/Commentary"
+
+    RaceSummary:
+      type: object
+      required: [raceId, totalDrivers, finishedDrivers, dnfCount]
+      properties:
+        raceId:
+          type: integer
+        totalDrivers:
+          type: integer
+        finishedDrivers:
+          type: integer
+        dnfCount:
+          type: integer
+        fastestLap:
+          type: ["string", "null"]
+        fastestLapDriver:
+          type: ["string", "null"]
+        totalLapsCompleted:
+          type: integer
+        safetyCarPeriods:
+          type: integer
+
+    Driver:
+      type: object
+      required: [id, name, abbreviation, number, nationality, teamId]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        abbreviation:
+          type: string
+        number:
+          type: integer
+        nationality:
+          type: string
+        teamId:
+          type: integer
+        teamName:
+          type: ["string", "null"]
+        teamColor:
+          type: ["string", "null"]
+
+    DriverInput:
+      type: object
+      required: [name, abbreviation, number, nationality, teamId]
+      properties:
+        name:
+          type: string
+        abbreviation:
+          type: string
+        number:
+          type: integer
+        nationality:
+          type: string
+        teamId:
+          type: integer
+
+    DriverUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        abbreviation:
+          type: string
+        number:
+          type: integer
+        nationality:
+          type: string
+        teamId:
+          type: integer
+
+    Team:
+      type: object
+      required: [id, name, color, nationality, principal]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+        nationality:
+          type: string
+        principal:
+          type: string
+        chassis:
+          type: ["string", "null"]
+        powerUnit:
+          type: ["string", "null"]
+
+    TeamInput:
+      type: object
+      required: [name, color, nationality, principal]
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+        nationality:
+          type: string
+        principal:
+          type: string
+        chassis:
+          type: ["string", "null"]
+        powerUnit:
+          type: ["string", "null"]
+
+    TeamUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+        nationality:
+          type: string
+        principal:
+          type: string
+        chassis:
+          type: ["string", "null"]
+        powerUnit:
+          type: ["string", "null"]
+
+    LapTime:
+      type: object
+      required: [id, raceId, driverId, lap, position, lapTimeMs]
+      properties:
+        id:
+          type: integer
+        raceId:
+          type: integer
+        driverId:
+          type: integer
+        lap:
+          type: integer
+        position:
+          type: integer
+        lapTimeMs:
+          type: integer
+        sector1Ms:
+          type: ["integer", "null"]
+        sector2Ms:
+          type: ["integer", "null"]
+        sector3Ms:
+          type: ["integer", "null"]
+        pitStop:
+          type: boolean
+        pitStopDurationMs:
+          type: ["integer", "null"]
+        isPurpleSector1:
+          type: boolean
+        isPurpleSector2:
+          type: boolean
+        isPurpleSector3:
+          type: boolean
+        isFastestLap:
+          type: boolean
+
+    LapTimeInput:
+      type: object
+      required: [driverId, lap, position, lapTimeMs]
+      properties:
+        driverId:
+          type: integer
+        lap:
+          type: integer
+        position:
+          type: integer
+        lapTimeMs:
+          type: integer
+        sector1Ms:
+          type: ["integer", "null"]
+        sector2Ms:
+          type: ["integer", "null"]
+        sector3Ms:
+          type: ["integer", "null"]
+        pitStop:
+          type: boolean
+        pitStopDurationMs:
+          type: ["integer", "null"]
+
+    DriverPosition:
+      type: object
+      required: [position, driverId, driverName, driverAbbr, teamName, teamColor, lap, gapToLeaderMs, intervalMs]
+      properties:
+        position:
+          type: integer
+        driverId:
+          type: integer
+        driverName:
+          type: string
+        driverAbbr:
+          type: string
+        driverNumber:
+          type: integer
+        teamName:
+          type: string
+        teamColor:
+          type: string
+        lap:
+          type: integer
+        gapToLeaderMs:
+          type: integer
+        intervalMs:
+          type: integer
+        lastLapTimeMs:
+          type: ["integer", "null"]
+        currentTire:
+          type: ["string", "null"]
+        tireLaps:
+          type: ["integer", "null"]
+        pitStops:
+          type: integer
+        dnf:
+          type: boolean
+        dnfReason:
+          type: ["string", "null"]
+
+    Commentary:
+      type: object
+      required: [id, raceId, message, type, timestamp]
+      properties:
+        id:
+          type: integer
+        raceId:
+          type: integer
+        message:
+          type: string
+        type:
+          type: string
+          enum: [normal, safety_car, vsc, flag, radio, incident, fastest_lap, overtake, pit_stop, dnf]
+        lap:
+          type: ["integer", "null"]
+        driverName:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+
+    CommentaryInput:
+      type: object
+      required: [message, type]
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+          enum: [normal, safety_car, vsc, flag, radio, incident, fastest_lap, overtake, pit_stop, dnf]
+        lap:
+          type: ["integer", "null"]
+        driverName:
+          type: ["string", "null"]
+
+    RaceControlMessage:
+      type: object
+      required: [id, raceId, message, category, timestamp]
+      properties:
+        id:
+          type: integer
+        raceId:
+          type: integer
+        message:
+          type: string
+        category:
+          type: string
+          enum: [flag, safety_car, vsc, drs, track, other]
+        flag:
+          type: ["string", "null"]
+          enum: ["green", "yellow", "red", "chequered", "white", "black_orange", null]
+        lap:
+          type: ["integer", "null"]
+        timestamp:
+          type: string
+
+    RaceControlInput:
+      type: object
+      required: [message, category]
+      properties:
+        message:
+          type: string
+        category:
+          type: string
+          enum: [flag, safety_car, vsc, drs, track, other]
+        flag:
+          type: ["string", "null"]
+          enum: ["green", "yellow", "red", "chequered", "white", "black_orange", null]
+        lap:
+          type: ["integer", "null"]
+
+    DriverStanding:
+      type: object
+      required: [position, driverId, driverName, driverAbbr, teamName, teamColor, points, wins, podiums, races]
+      properties:
+        position:
+          type: integer
+        driverId:
+          type: integer
+        driverName:
+          type: string
+        driverAbbr:
+          type: string
+        driverNumber:
+          type: integer
+        teamName:
+          type: string
+        teamColor:
+          type: string
+        points:
+          type: number
+        wins:
+          type: integer
+        podiums:
+          type: integer
+        races:
+          type: integer
+
+    ConstructorStanding:
+      type: object
+      required: [position, teamId, teamName, teamColor, points, wins]
+      properties:
+        position:
+          type: integer
+        teamId:
+          type: integer
+        teamName:
+          type: string
+        teamColor:
+          type: string
+        points:
+          type: number
+        wins:
+          type: integer
+        podiums:
+          type: integer
+
+    SeasonSummary:
+      type: object
+      required: [season, racesCompleted, racesRemaining, leadingDriver, leadingConstructor, totalOvertakes]
+      properties:
+        season:
+          type: integer
+        racesCompleted:
+          type: integer
+        racesRemaining:
+          type: integer
+        leadingDriver:
+          type: string
+        leadingDriverPoints:
+          type: number
+        leadingConstructor:
+          type: string
+        leadingConstructorPoints:
+          type: number
+        totalOvertakes:
+          type: integer
+        totalDnfs:
+          type: integer
+
+    TireStrategy:
+      type: object
+      required: [id, raceId, driverId, compound, startLap, driverName]
+      properties:
+        id:
+          type: integer
+        raceId:
+          type: integer
+        driverId:
+          type: integer
+        driverName:
+          type: string
+        compound:
+          type: string
+          enum: [soft, medium, hard, intermediate, wet]
+        startLap:
+          type: integer
+        endLap:
+          type: ["integer", "null"]
+
+    TireStrategyInput:
+      type: object
+      required: [driverId, compound, startLap]
+      properties:
+        driverId:
+          type: integer
+        compound:
+          type: string
+          enum: [soft, medium, hard, intermediate, wet]
+        startLap:
+          type: integer
+        endLap:
+          type: ["integer", "null"]
