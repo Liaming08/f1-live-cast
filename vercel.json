@@ -1,6 +1,0 @@
-{
-  "buildCommand": "pnpm install && pnpm run build",
-  "outputDirectory": "dist/public",
-  "root": "artifacts/f1-live",
-  "installCommand": "pnpm install"
-}
