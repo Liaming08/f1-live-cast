@@ -1,8 +1,5 @@
 {
   "buildCommand": "corepack pnpm --filter @workspace/f1-live run build",
   "outputDirectory": "artifacts/f1-live/dist",
-  "installCommand": "corepack pnpm install --ignore-scripts",
-  "env": {
-    "VITE_API_URL": "@vite_api_url"
-  }
+  "installCommand": "corepack pnpm install --ignore-scripts"
 }
