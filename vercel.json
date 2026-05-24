@@ -1,5 +1,5 @@
 {
   "buildCommand": "corepack pnpm --filter @workspace/f1-live run build",
-  "outputDirectory": "artifacts/f1-live/dist",
+  "outputDirectory": "artifacts/f1-live/dist/public",
   "installCommand": "corepack pnpm install --ignore-scripts"
 }
