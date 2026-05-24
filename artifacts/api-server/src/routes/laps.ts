@@ -12,7 +12,7 @@ router.get("/races/:id/laps", async (req, res) => {
   const laps = await db.select().from(lapTimesTable)
     .where(eq(lapTimesTable.raceId, parsed.data.id))
     .orderBy(lapTimesTable.lap, lapTimesTable.position);
-  res.json(laps.map(l => ({
+  return res.json(laps.map(l => ({
     ...l,
     pitStop: l.pitStop ?? false,
     isPurpleSector1: l.isPurpleSector1 ?? false,
@@ -43,7 +43,7 @@ router.post("/races/:id/laps", async (req, res) => {
     isPurpleSector3: false,
     isFastestLap: false,
   }).returning();
-  res.status(201).json({
+  return res.status(201).json({
     ...lap,
     pitStop: lap.pitStop ?? false,
     isPurpleSector1: lap.isPurpleSector1 ?? false,
@@ -113,7 +113,7 @@ router.get("/races/:id/laps/latest", async (req, res) => {
     };
   });
 
-  res.json(positions);
+  return res.json(positions);
 });
 
 export default router;

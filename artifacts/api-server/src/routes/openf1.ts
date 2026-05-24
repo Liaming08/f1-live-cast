@@ -98,9 +98,9 @@ router.get("/openf1/sessions", async (req, res) => {
     if (meeting_key) url += `&meeting_key=${meeting_key}`;
     const data = await f1fetch(url);
     cacheSet(ckey, data);
-    res.json(data);
+    return res.json(data);
   } catch (err) {
-    res.status(502).json({ error: String(err) });
+    return res.status(502).json({ error: String(err) });
   }
 });
 
@@ -114,9 +114,9 @@ router.get("/openf1/session-info", async (req, res) => {
     if (!sessions.length) return res.status(404).json({ error: "Session not found" });
     const info = sessions[sessions.length - 1];
     cacheSet(ckey, info);
-    res.json(info);
+    return res.json(info);
   } catch (err) {
-    res.status(502).json({ error: String(err) });
+    return res.status(502).json({ error: String(err) });
   }
 });
 
@@ -194,9 +194,9 @@ router.get("/openf1/live", async (req, res) => {
     };
 
     cacheSet(ckey, result);
-    res.json(result);
+    return res.json(result);
   } catch (err) {
-    res.status(502).json({ error: String(err) });
+    return res.status(502).json({ error: String(err) });
   }
 });
 
@@ -267,9 +267,9 @@ router.get("/openf1/qualifying", async (req, res) => {
       results: [...results, ...noTime],
     };
     cacheSet(ckey, result);
-    res.json(result);
+    return res.json(result);
   } catch (err) {
-    res.status(502).json({ error: String(err) });
+    return res.status(502).json({ error: String(err) });
   }
 });
 
@@ -321,9 +321,9 @@ router.get("/openf1/practice", async (req, res) => {
       }),
     };
     cacheSet(ckey, result);
-    res.json(result);
+    return res.json(result);
   } catch (err) {
-    res.status(502).json({ error: String(err) });
+    return res.status(502).json({ error: String(err) });
   }
 });
 

@@ -12,7 +12,7 @@ router.get("/races/:id/commentary", async (req, res) => {
   const entries = await db.select().from(commentaryTable)
     .where(eq(commentaryTable.raceId, parsed.data.id))
     .orderBy(desc(commentaryTable.timestamp));
-  res.json(entries.map(e => ({ ...e, timestamp: e.timestamp.toISOString() })));
+  return res.json(entries.map(e => ({ ...e, timestamp: e.timestamp.toISOString() })));
 });
 
 router.post("/races/:id/commentary", async (req, res) => {
@@ -27,14 +27,14 @@ router.post("/races/:id/commentary", async (req, res) => {
     lap: parsed.data.lap ?? null,
     driverName: parsed.data.driverName ?? null,
   }).returning();
-  res.status(201).json({ ...entry, timestamp: entry.timestamp.toISOString() });
+  return res.status(201).json({ ...entry, timestamp: entry.timestamp.toISOString() });
 });
 
 router.delete("/commentary/:id", async (req, res) => {
   const parsed = DeleteCommentaryParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(commentaryTable).where(eq(commentaryTable.id, parsed.data.id));
-  res.status(204).send();
+  return res.status(204).send();
 });
 
 export default router;

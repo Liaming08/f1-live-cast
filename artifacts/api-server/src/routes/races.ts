@@ -9,7 +9,7 @@ const router = Router();
 
 router.get("/races", async (req, res) => {
   const races = await db.select().from(racesTable).orderBy(racesTable.round);
-  res.json(races.map(r => ({
+  return res.json(races.map(r => ({
     ...r,
     safetyCarDeployed: r.safetyCarDeployed ?? false,
     vscDeployed: r.vscDeployed ?? false,
@@ -72,7 +72,7 @@ router.get("/races/live", async (req, res) => {
     };
   });
 
-  res.json({
+  return res.json({
     hasLiveRace: true,
     race: { ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false },
     leader,
@@ -90,7 +90,7 @@ router.get("/races/:id", async (req, res) => {
   const race = await db.select().from(racesTable).where(eq(racesTable.id, parsed.data.id)).limit(1);
   if (!race.length) return res.status(404).json({ error: "Not found" });
   const r = race[0];
-  res.json({ ...r, safetyCarDeployed: r.safetyCarDeployed ?? false, vscDeployed: r.vscDeployed ?? false });
+  return res.json({ ...r, safetyCarDeployed: r.safetyCarDeployed ?? false, vscDeployed: r.vscDeployed ?? false });
 });
 
 router.post("/races", async (req, res) => {
@@ -111,7 +111,7 @@ router.post("/races", async (req, res) => {
     safetyCarDeployed: false,
     vscDeployed: false,
   }).returning();
-  res.status(201).json({ ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false });
+  return res.status(201).json({ ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false });
 });
 
 router.patch("/races/:id", async (req, res) => {
@@ -136,14 +136,14 @@ router.patch("/races/:id", async (req, res) => {
   if (d.vscDeployed !== undefined) updates.vscDeployed = d.vscDeployed;
   const [race] = await db.update(racesTable).set(updates).where(eq(racesTable.id, idParsed.data.id)).returning();
   if (!race) return res.status(404).json({ error: "Not found" });
-  res.json({ ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false });
+  return res.json({ ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false });
 });
 
 router.delete("/races/:id", async (req, res) => {
   const parsed = DeleteRaceParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(racesTable).where(eq(racesTable.id, parsed.data.id));
-  res.status(204).send();
+  return res.status(204).send();
 });
 
 router.get("/races/:id/summary", async (req, res) => {
@@ -172,7 +172,7 @@ router.get("/races/:id/summary", async (req, res) => {
   const uniqueDrivers = new Set(allLaps.map(l => l.driverId));
   const totalLapsCompleted = allLaps.length;
 
-  res.json({
+  return res.json({
     raceId,
     totalDrivers: uniqueDrivers.size,
     finishedDrivers: uniqueDrivers.size - dnfEntries.length,

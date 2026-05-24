@@ -49,7 +49,7 @@ router.get("/standings/drivers", async (req, res) => {
     };
   }).sort((a, b) => b.points - a.points || b.wins - a.wins);
 
-  res.json(standings.map((s, idx) => ({ ...s, position: idx + 1 })));
+  return res.json(standings.map((s, idx) => ({ ...s, position: idx + 1 })));
 });
 
 router.get("/standings/constructors", async (req, res) => {
@@ -76,7 +76,7 @@ router.get("/standings/constructors", async (req, res) => {
     };
   }).sort((a, b) => b.points - a.points || b.wins - a.wins);
 
-  res.json(standings.map((s, idx) => ({ ...s, position: idx + 1 })));
+  return res.json(standings.map((s, idx) => ({ ...s, position: idx + 1 })));
 });
 
 router.get("/standings/summary", async (req, res) => {
@@ -102,7 +102,7 @@ router.get("/standings/summary", async (req, res) => {
     return { name: team.name, points };
   }).sort((a, b) => b.points - a.points);
 
-  res.json({
+  return res.json({
     season,
     racesCompleted,
     racesRemaining,

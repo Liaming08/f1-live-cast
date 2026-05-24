@@ -23,7 +23,7 @@ router.get("/races/:id/tires", async (req, res) => {
     .leftJoin(driversTable, eq(tireStrategiesTable.driverId, driversTable.id))
     .where(eq(tireStrategiesTable.raceId, parsed.data.id))
     .orderBy(tireStrategiesTable.startLap);
-  res.json(rows.map(r => ({ ...r, driverName: r.driverName ?? "" })));
+  return res.json(rows.map(r => ({ ...r, driverName: r.driverName ?? "" })));
 });
 
 router.post("/races/:id/tires", async (req, res) => {
@@ -39,7 +39,7 @@ router.post("/races/:id/tires", async (req, res) => {
     endLap: parsed.data.endLap ?? null,
   }).returning();
   const driver = await db.select().from(driversTable).where(eq(driversTable.id, tire.driverId)).limit(1);
-  res.status(201).json({ ...tire, driverName: driver[0]?.name ?? "" });
+  return res.status(201).json({ ...tire, driverName: driver[0]?.name ?? "" });
 });
 
 export default router;

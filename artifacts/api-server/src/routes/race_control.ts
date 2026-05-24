@@ -12,7 +12,7 @@ router.get("/races/:id/race-control", async (req, res) => {
   const entries = await db.select().from(raceControlTable)
     .where(eq(raceControlTable.raceId, parsed.data.id))
     .orderBy(desc(raceControlTable.timestamp));
-  res.json(entries.map(e => ({ ...e, timestamp: e.timestamp.toISOString() })));
+  return res.json(entries.map(e => ({ ...e, timestamp: e.timestamp.toISOString() })));
 });
 
 router.post("/races/:id/race-control", async (req, res) => {
@@ -27,7 +27,7 @@ router.post("/races/:id/race-control", async (req, res) => {
     flag: parsed.data.flag ?? null,
     lap: parsed.data.lap ?? null,
   }).returning();
-  res.status(201).json({ ...entry, timestamp: entry.timestamp.toISOString() });
+  return res.status(201).json({ ...entry, timestamp: entry.timestamp.toISOString() });
 });
 
 export default router;
