@@ -16,6 +16,7 @@ tags:
   - name: race-control
   - name: standings
   - name: tires
+  - name: openf1
 paths:
   /healthz:
     get:
@@ -561,6 +562,99 @@ paths:
               schema:
                 $ref: "#/components/schemas/TireStrategy"
 
+  /openf1/sessions:
+    get:
+      operationId: listOpenF1Sessions
+      tags: [openf1]
+      summary: List F1 sessions from OpenF1 API
+      parameters:
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: session_type
+          in: query
+          schema: { type: string }
+        - name: meeting_key
+          in: query
+          schema: { type: integer }
+      responses:
+        "200":
+          description: List of OpenF1 sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpenF1Session"
+
+  /openf1/session-info:
+    get:
+      operationId: getOpenF1SessionInfo
+      tags: [openf1]
+      summary: Get info about a specific OpenF1 session
+      parameters:
+        - name: sessionKey
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Session info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenF1Session"
+
+  /openf1/live:
+    get:
+      operationId: getOpenF1Live
+      tags: [openf1]
+      summary: Get live timing bundle from OpenF1
+      parameters:
+        - name: sessionKey
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Live bundle
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenF1LiveBundle"
+
+  /openf1/qualifying:
+    get:
+      operationId: getOpenF1Qualifying
+      tags: [openf1]
+      summary: Get qualifying results from OpenF1
+      parameters:
+        - name: sessionKey
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Qualifying results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenF1QualifyingResult"
+
+  /openf1/practice:
+    get:
+      operationId: getOpenF1Practice
+      tags: [openf1]
+      summary: Get practice session results from OpenF1
+      parameters:
+        - name: sessionKey
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Practice results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenF1PracticeResult"
+
 components:
   schemas:
     HealthStatus:
@@ -1071,3 +1165,196 @@ components:
           type: integer
         endLap:
           type: ["integer", "null"]
+
+    OpenF1Session:
+      type: object
+      required: [session_key, session_name, session_type, meeting_key, circuit_short_name, country_name, date_start, year]
+      properties:
+        session_key:
+          type: integer
+        session_name:
+          type: string
+        session_type:
+          type: string
+        meeting_key:
+          type: integer
+        circuit_short_name:
+          type: string
+        country_name:
+          type: string
+        location:
+          type: string
+        date_start:
+          type: string
+        date_end:
+          type: string
+        year:
+          type: integer
+
+    OpenF1Weather:
+      type: object
+      properties:
+        air_temperature:
+          type: ["number", "null"]
+        track_temperature:
+          type: ["number", "null"]
+        wind_speed:
+          type: ["number", "null"]
+        wind_direction:
+          type: ["number", "null"]
+        humidity:
+          type: ["number", "null"]
+        rainfall:
+          type: ["number", "null"]
+        pressure:
+          type: ["number", "null"]
+
+    OpenF1RaceControlMsg:
+      type: object
+      properties:
+        date:
+          type: string
+        message:
+          type: string
+        category:
+          type: string
+        flag:
+          type: ["string", "null"]
+        lap_number:
+          type: ["integer", "null"]
+
+    OpenF1TimingEntry:
+      type: object
+      required: [position, driverNumber, abbreviation, teamName, teamColor]
+      properties:
+        position:
+          type: integer
+        driverNumber:
+          type: integer
+        abbreviation:
+          type: string
+        fullName:
+          type: string
+        teamName:
+          type: string
+        teamColor:
+          type: string
+        headshotUrl:
+          type: ["string", "null"]
+        compound:
+          type: ["string", "null"]
+        tyreAge:
+          type: ["integer", "null"]
+        stintLap:
+          type: ["integer", "null"]
+        gapToLeader:
+          type: ["string", "null"]
+        interval:
+          type: ["string", "null"]
+
+    OpenF1LiveBundle:
+      type: object
+      required: [sessionKey, timing, raceControl]
+      properties:
+        sessionKey:
+          type: ["string", "integer"]
+        timing:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenF1TimingEntry"
+        weather:
+          oneOf:
+            - $ref: "#/components/schemas/OpenF1Weather"
+            - type: "null"
+        raceControl:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenF1RaceControlMsg"
+
+    OpenF1QualifyingEntry:
+      type: object
+      required: [position, driverNumber, abbreviation, teamName, teamColor]
+      properties:
+        position:
+          type: integer
+        driverNumber:
+          type: integer
+        abbreviation:
+          type: string
+        fullName:
+          type: string
+        teamName:
+          type: string
+        teamColor:
+          type: string
+        headshotUrl:
+          type: ["string", "null"]
+        lapTime:
+          type: ["number", "null"]
+        lapNumber:
+          type: ["integer", "null"]
+        gapToPole:
+          type: ["number", "null"]
+        s1:
+          type: ["number", "null"]
+        s2:
+          type: ["number", "null"]
+        s3:
+          type: ["number", "null"]
+
+    OpenF1QualifyingResult:
+      type: object
+      required: [sessionKey, sessionName, sessionType, results]
+      properties:
+        sessionKey:
+          type: ["string", "integer"]
+        sessionName:
+          type: string
+        sessionType:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenF1QualifyingEntry"
+
+    OpenF1PracticeEntry:
+      type: object
+      required: [position, driverNumber, abbreviation, teamName, teamColor]
+      properties:
+        position:
+          type: integer
+        driverNumber:
+          type: integer
+        abbreviation:
+          type: string
+        fullName:
+          type: string
+        teamName:
+          type: string
+        teamColor:
+          type: string
+        headshotUrl:
+          type: ["string", "null"]
+        lapTime:
+          type: ["number", "null"]
+        gap:
+          type: ["number", "null"]
+        s1:
+          type: ["number", "null"]
+        s2:
+          type: ["number", "null"]
+        s3:
+          type: ["number", "null"]
+        lapsCompleted:
+          type: integer
+
+    OpenF1PracticeResult:
+      type: object
+      required: [sessionKey, results]
+      properties:
+        sessionKey:
+          type: ["string", "integer"]
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenF1PracticeEntry"

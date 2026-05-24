@@ -38,7 +38,7 @@ export default function Races() {
                     </CardTitle>
                   </div>
                   <Badge variant={
-                    race.status === 'live' || race.status === 'race' ? 'default' : 
+                    (race.status as string) === 'live' || race.status === 'race' ? 'default' : 
                     race.status === 'finished' ? 'secondary' : 'outline'
                   } className="uppercase font-bold tracking-wider">
                     {race.status}

@@ -8,6 +8,7 @@ import commentaryRouter from "./commentary";
 import raceControlRouter from "./race_control";
 import standingsRouter from "./standings";
 import tiresRouter from "./tires";
+import openf1Router from "./openf1";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(commentaryRouter);
 router.use(raceControlRouter);
 router.use(standingsRouter);
 router.use(tiresRouter);
+router.use(openf1Router);
 
 export default router;

@@ -28,10 +28,19 @@ import type {
   DriverPosition,
   DriverStanding,
   DriverUpdate,
+  GetOpenF1LiveParams,
+  GetOpenF1PracticeParams,
+  GetOpenF1QualifyingParams,
+  GetOpenF1SessionInfoParams,
   HealthStatus,
   LapTime,
   LapTimeInput,
+  ListOpenF1SessionsParams,
   LiveRaceSummary,
+  OpenF1LiveBundle,
+  OpenF1PracticeResult,
+  OpenF1QualifyingResult,
+  OpenF1Session,
   Race,
   RaceControlInput,
   RaceControlMessage,
@@ -2286,4 +2295,424 @@ export const useAddTireStrategy = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getAddTireStrategyMutationOptions(options));
     }
+
+export const getListOpenF1SessionsUrl = (params?: ListOpenF1SessionsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/openf1/sessions?${stringifiedParams}` : `/api/openf1/sessions`
+}
+
+/**
+ * @summary List F1 sessions from OpenF1 API
+ */
+export const listOpenF1Sessions = async (params?: ListOpenF1SessionsParams, options?: RequestInit): Promise<OpenF1Session[]> => {
+
+  return customFetch<OpenF1Session[]>(getListOpenF1SessionsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListOpenF1SessionsQueryKey = (params?: ListOpenF1SessionsParams,) => {
+    return [
+    `/api/openf1/sessions`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListOpenF1SessionsQueryOptions = <TData = Awaited<ReturnType<typeof listOpenF1Sessions>>, TError = ErrorType<unknown>>(params?: ListOpenF1SessionsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listOpenF1Sessions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListOpenF1SessionsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listOpenF1Sessions>>> = ({ signal }) => listOpenF1Sessions(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listOpenF1Sessions>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListOpenF1SessionsQueryResult = NonNullable<Awaited<ReturnType<typeof listOpenF1Sessions>>>
+export type ListOpenF1SessionsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List F1 sessions from OpenF1 API
+ */
+
+export function useListOpenF1Sessions<TData = Awaited<ReturnType<typeof listOpenF1Sessions>>, TError = ErrorType<unknown>>(
+ params?: ListOpenF1SessionsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listOpenF1Sessions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListOpenF1SessionsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetOpenF1SessionInfoUrl = (params?: GetOpenF1SessionInfoParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/openf1/session-info?${stringifiedParams}` : `/api/openf1/session-info`
+}
+
+/**
+ * @summary Get info about a specific OpenF1 session
+ */
+export const getOpenF1SessionInfo = async (params?: GetOpenF1SessionInfoParams, options?: RequestInit): Promise<OpenF1Session> => {
+
+  return customFetch<OpenF1Session>(getGetOpenF1SessionInfoUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOpenF1SessionInfoQueryKey = (params?: GetOpenF1SessionInfoParams,) => {
+    return [
+    `/api/openf1/session-info`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetOpenF1SessionInfoQueryOptions = <TData = Awaited<ReturnType<typeof getOpenF1SessionInfo>>, TError = ErrorType<unknown>>(params?: GetOpenF1SessionInfoParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1SessionInfo>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOpenF1SessionInfoQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOpenF1SessionInfo>>> = ({ signal }) => getOpenF1SessionInfo(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOpenF1SessionInfo>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOpenF1SessionInfoQueryResult = NonNullable<Awaited<ReturnType<typeof getOpenF1SessionInfo>>>
+export type GetOpenF1SessionInfoQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get info about a specific OpenF1 session
+ */
+
+export function useGetOpenF1SessionInfo<TData = Awaited<ReturnType<typeof getOpenF1SessionInfo>>, TError = ErrorType<unknown>>(
+ params?: GetOpenF1SessionInfoParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1SessionInfo>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetOpenF1SessionInfoQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetOpenF1LiveUrl = (params?: GetOpenF1LiveParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/openf1/live?${stringifiedParams}` : `/api/openf1/live`
+}
+
+/**
+ * @summary Get live timing bundle from OpenF1
+ */
+export const getOpenF1Live = async (params?: GetOpenF1LiveParams, options?: RequestInit): Promise<OpenF1LiveBundle> => {
+
+  return customFetch<OpenF1LiveBundle>(getGetOpenF1LiveUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOpenF1LiveQueryKey = (params?: GetOpenF1LiveParams,) => {
+    return [
+    `/api/openf1/live`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetOpenF1LiveQueryOptions = <TData = Awaited<ReturnType<typeof getOpenF1Live>>, TError = ErrorType<unknown>>(params?: GetOpenF1LiveParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Live>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOpenF1LiveQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOpenF1Live>>> = ({ signal }) => getOpenF1Live(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Live>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOpenF1LiveQueryResult = NonNullable<Awaited<ReturnType<typeof getOpenF1Live>>>
+export type GetOpenF1LiveQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get live timing bundle from OpenF1
+ */
+
+export function useGetOpenF1Live<TData = Awaited<ReturnType<typeof getOpenF1Live>>, TError = ErrorType<unknown>>(
+ params?: GetOpenF1LiveParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Live>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetOpenF1LiveQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetOpenF1QualifyingUrl = (params?: GetOpenF1QualifyingParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/openf1/qualifying?${stringifiedParams}` : `/api/openf1/qualifying`
+}
+
+/**
+ * @summary Get qualifying results from OpenF1
+ */
+export const getOpenF1Qualifying = async (params?: GetOpenF1QualifyingParams, options?: RequestInit): Promise<OpenF1QualifyingResult> => {
+
+  return customFetch<OpenF1QualifyingResult>(getGetOpenF1QualifyingUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOpenF1QualifyingQueryKey = (params?: GetOpenF1QualifyingParams,) => {
+    return [
+    `/api/openf1/qualifying`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetOpenF1QualifyingQueryOptions = <TData = Awaited<ReturnType<typeof getOpenF1Qualifying>>, TError = ErrorType<unknown>>(params?: GetOpenF1QualifyingParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Qualifying>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOpenF1QualifyingQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOpenF1Qualifying>>> = ({ signal }) => getOpenF1Qualifying(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Qualifying>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOpenF1QualifyingQueryResult = NonNullable<Awaited<ReturnType<typeof getOpenF1Qualifying>>>
+export type GetOpenF1QualifyingQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get qualifying results from OpenF1
+ */
+
+export function useGetOpenF1Qualifying<TData = Awaited<ReturnType<typeof getOpenF1Qualifying>>, TError = ErrorType<unknown>>(
+ params?: GetOpenF1QualifyingParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Qualifying>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetOpenF1QualifyingQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetOpenF1PracticeUrl = (params?: GetOpenF1PracticeParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/openf1/practice?${stringifiedParams}` : `/api/openf1/practice`
+}
+
+/**
+ * @summary Get practice session results from OpenF1
+ */
+export const getOpenF1Practice = async (params?: GetOpenF1PracticeParams, options?: RequestInit): Promise<OpenF1PracticeResult> => {
+
+  return customFetch<OpenF1PracticeResult>(getGetOpenF1PracticeUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOpenF1PracticeQueryKey = (params?: GetOpenF1PracticeParams,) => {
+    return [
+    `/api/openf1/practice`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetOpenF1PracticeQueryOptions = <TData = Awaited<ReturnType<typeof getOpenF1Practice>>, TError = ErrorType<unknown>>(params?: GetOpenF1PracticeParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Practice>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOpenF1PracticeQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOpenF1Practice>>> = ({ signal }) => getOpenF1Practice(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Practice>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOpenF1PracticeQueryResult = NonNullable<Awaited<ReturnType<typeof getOpenF1Practice>>>
+export type GetOpenF1PracticeQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get practice session results from OpenF1
+ */
+
+export function useGetOpenF1Practice<TData = Awaited<ReturnType<typeof getOpenF1Practice>>, TError = ErrorType<unknown>>(
+ params?: GetOpenF1PracticeParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getOpenF1Practice>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetOpenF1PracticeQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 

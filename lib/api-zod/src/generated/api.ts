@@ -593,3 +593,146 @@ export const AddTireStrategyBody = zod.object({
 })
 
 
+/**
+ * @summary List F1 sessions from OpenF1 API
+ */
+export const ListOpenF1SessionsQueryParams = zod.object({
+  "year": zod.coerce.number().optional(),
+  "session_type": zod.coerce.string().optional(),
+  "meeting_key": zod.coerce.number().optional()
+})
+
+export const ListOpenF1SessionsResponseItem = zod.object({
+  "session_key": zod.number(),
+  "session_name": zod.string(),
+  "session_type": zod.string(),
+  "meeting_key": zod.number(),
+  "circuit_short_name": zod.string(),
+  "country_name": zod.string(),
+  "location": zod.string().optional(),
+  "date_start": zod.string(),
+  "date_end": zod.string().optional(),
+  "year": zod.number()
+})
+export const ListOpenF1SessionsResponse = zod.array(ListOpenF1SessionsResponseItem)
+
+
+/**
+ * @summary Get info about a specific OpenF1 session
+ */
+export const GetOpenF1SessionInfoQueryParams = zod.object({
+  "sessionKey": zod.coerce.string().optional()
+})
+
+export const GetOpenF1SessionInfoResponse = zod.object({
+  "session_key": zod.number(),
+  "session_name": zod.string(),
+  "session_type": zod.string(),
+  "meeting_key": zod.number(),
+  "circuit_short_name": zod.string(),
+  "country_name": zod.string(),
+  "location": zod.string().optional(),
+  "date_start": zod.string(),
+  "date_end": zod.string().optional(),
+  "year": zod.number()
+})
+
+
+/**
+ * @summary Get live timing bundle from OpenF1
+ */
+export const GetOpenF1LiveQueryParams = zod.object({
+  "sessionKey": zod.coerce.string().optional()
+})
+
+export const GetOpenF1LiveResponse = zod.object({
+  "sessionKey": zod.union([zod.string(),zod.number()]),
+  "timing": zod.array(zod.object({
+  "position": zod.number(),
+  "driverNumber": zod.number(),
+  "abbreviation": zod.string(),
+  "fullName": zod.string().optional(),
+  "teamName": zod.string(),
+  "teamColor": zod.string(),
+  "headshotUrl": zod.string().nullish(),
+  "compound": zod.string().nullish(),
+  "tyreAge": zod.number().nullish(),
+  "stintLap": zod.number().nullish(),
+  "gapToLeader": zod.string().nullish(),
+  "interval": zod.string().nullish()
+})),
+  "weather": zod.union([zod.object({
+  "air_temperature": zod.number().nullish(),
+  "track_temperature": zod.number().nullish(),
+  "wind_speed": zod.number().nullish(),
+  "wind_direction": zod.number().nullish(),
+  "humidity": zod.number().nullish(),
+  "rainfall": zod.number().nullish(),
+  "pressure": zod.number().nullish()
+}),zod.null()]).optional(),
+  "raceControl": zod.array(zod.object({
+  "date": zod.string().optional(),
+  "message": zod.string().optional(),
+  "category": zod.string().optional(),
+  "flag": zod.string().nullish(),
+  "lap_number": zod.number().nullish()
+}))
+})
+
+
+/**
+ * @summary Get qualifying results from OpenF1
+ */
+export const GetOpenF1QualifyingQueryParams = zod.object({
+  "sessionKey": zod.coerce.string().optional()
+})
+
+export const GetOpenF1QualifyingResponse = zod.object({
+  "sessionKey": zod.union([zod.string(),zod.number()]),
+  "sessionName": zod.string(),
+  "sessionType": zod.string(),
+  "results": zod.array(zod.object({
+  "position": zod.number(),
+  "driverNumber": zod.number(),
+  "abbreviation": zod.string(),
+  "fullName": zod.string().optional(),
+  "teamName": zod.string(),
+  "teamColor": zod.string(),
+  "headshotUrl": zod.string().nullish(),
+  "lapTime": zod.number().nullish(),
+  "lapNumber": zod.number().nullish(),
+  "gapToPole": zod.number().nullish(),
+  "s1": zod.number().nullish(),
+  "s2": zod.number().nullish(),
+  "s3": zod.number().nullish()
+}))
+})
+
+
+/**
+ * @summary Get practice session results from OpenF1
+ */
+export const GetOpenF1PracticeQueryParams = zod.object({
+  "sessionKey": zod.coerce.string().optional()
+})
+
+export const GetOpenF1PracticeResponse = zod.object({
+  "sessionKey": zod.union([zod.string(),zod.number()]),
+  "results": zod.array(zod.object({
+  "position": zod.number(),
+  "driverNumber": zod.number(),
+  "abbreviation": zod.string(),
+  "fullName": zod.string().optional(),
+  "teamName": zod.string(),
+  "teamColor": zod.string(),
+  "headshotUrl": zod.string().nullish(),
+  "lapTime": zod.number().nullish(),
+  "gap": zod.number().nullish(),
+  "s1": zod.number().nullish(),
+  "s2": zod.number().nullish(),
+  "s3": zod.number().nullish(),
+  "lapsCompleted": zod.number().optional()
+}))
+})
+
+

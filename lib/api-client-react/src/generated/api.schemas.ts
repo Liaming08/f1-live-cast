@@ -442,3 +442,150 @@ export interface TireStrategyInput {
   endLap?: number | null;
 }
 
+export interface OpenF1Session {
+  session_key: number;
+  session_name: string;
+  session_type: string;
+  meeting_key: number;
+  circuit_short_name: string;
+  country_name: string;
+  location?: string;
+  date_start: string;
+  date_end?: string;
+  year: number;
+}
+
+export interface OpenF1Weather {
+  /** @nullable */
+  air_temperature?: number | null;
+  /** @nullable */
+  track_temperature?: number | null;
+  /** @nullable */
+  wind_speed?: number | null;
+  /** @nullable */
+  wind_direction?: number | null;
+  /** @nullable */
+  humidity?: number | null;
+  /** @nullable */
+  rainfall?: number | null;
+  /** @nullable */
+  pressure?: number | null;
+}
+
+export interface OpenF1RaceControlMsg {
+  date?: string;
+  message?: string;
+  category?: string;
+  /** @nullable */
+  flag?: string | null;
+  /** @nullable */
+  lap_number?: number | null;
+}
+
+export interface OpenF1TimingEntry {
+  position: number;
+  driverNumber: number;
+  abbreviation: string;
+  fullName?: string;
+  teamName: string;
+  teamColor: string;
+  /** @nullable */
+  headshotUrl?: string | null;
+  /** @nullable */
+  compound?: string | null;
+  /** @nullable */
+  tyreAge?: number | null;
+  /** @nullable */
+  stintLap?: number | null;
+  /** @nullable */
+  gapToLeader?: string | null;
+  /** @nullable */
+  interval?: string | null;
+}
+
+export interface OpenF1LiveBundle {
+  sessionKey: string | number;
+  timing: OpenF1TimingEntry[];
+  weather?: OpenF1Weather | null;
+  raceControl: OpenF1RaceControlMsg[];
+}
+
+export interface OpenF1QualifyingEntry {
+  position: number;
+  driverNumber: number;
+  abbreviation: string;
+  fullName?: string;
+  teamName: string;
+  teamColor: string;
+  /** @nullable */
+  headshotUrl?: string | null;
+  /** @nullable */
+  lapTime?: number | null;
+  /** @nullable */
+  lapNumber?: number | null;
+  /** @nullable */
+  gapToPole?: number | null;
+  /** @nullable */
+  s1?: number | null;
+  /** @nullable */
+  s2?: number | null;
+  /** @nullable */
+  s3?: number | null;
+}
+
+export interface OpenF1QualifyingResult {
+  sessionKey: string | number;
+  sessionName: string;
+  sessionType: string;
+  results: OpenF1QualifyingEntry[];
+}
+
+export interface OpenF1PracticeEntry {
+  position: number;
+  driverNumber: number;
+  abbreviation: string;
+  fullName?: string;
+  teamName: string;
+  teamColor: string;
+  /** @nullable */
+  headshotUrl?: string | null;
+  /** @nullable */
+  lapTime?: number | null;
+  /** @nullable */
+  gap?: number | null;
+  /** @nullable */
+  s1?: number | null;
+  /** @nullable */
+  s2?: number | null;
+  /** @nullable */
+  s3?: number | null;
+  lapsCompleted?: number;
+}
+
+export interface OpenF1PracticeResult {
+  sessionKey: string | number;
+  results: OpenF1PracticeEntry[];
+}
+
+export type ListOpenF1SessionsParams = {
+year?: number;
+session_type?: string;
+meeting_key?: number;
+};
+
+export type GetOpenF1SessionInfoParams = {
+sessionKey?: string;
+};
+
+export type GetOpenF1LiveParams = {
+sessionKey?: string;
+};
+
+export type GetOpenF1QualifyingParams = {
+sessionKey?: string;
+};
+
+export type GetOpenF1PracticeParams = {
+sessionKey?: string;
+};
+
