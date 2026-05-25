@@ -1,4 +1,4 @@
 {
-  "buildCommand": "cd artifacts/f1-live && pnpm install --prod=false && pnpm run build",
-  "installCommand": "pnpm install --prod=false"
+  "buildCommand": "pnpm -w install --prod=false && pnpm -r --filter './artifacts/f1-live' run build",
+  "installCommand": "pnpm -w install --prod=false"
 }
