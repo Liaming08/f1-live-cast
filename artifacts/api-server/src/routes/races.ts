@@ -4,6 +4,7 @@ import { racesTable, driversTable, teamsTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { CreateRaceBody, UpdateRaceBody, UpdateRaceParams, DeleteRaceParams, GetRaceParams, GetRaceSummaryParams } from "@workspace/api-zod";
 import { commentaryTable, lapTimesTable, raceControlTable } from "@workspace/db";
+import { adminAuthMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
@@ -93,7 +94,7 @@ router.get("/races/:id", async (req, res) => {
   return res.json({ ...r, safetyCarDeployed: r.safetyCarDeployed ?? false, vscDeployed: r.vscDeployed ?? false });
 });
 
-router.post("/races", async (req, res) => {
+router.post("/races", adminAuthMiddleware, async (req, res) => {
   const parsed = CreateRaceBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.message });
   const [race] = await db.insert(racesTable).values({
@@ -114,7 +115,7 @@ router.post("/races", async (req, res) => {
   return res.status(201).json({ ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false });
 });
 
-router.patch("/races/:id", async (req, res) => {
+router.patch("/races/:id", adminAuthMiddleware, async (req, res) => {
   const idParsed = UpdateRaceParams.safeParse({ id: Number(req.params.id) });
   if (!idParsed.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdateRaceBody.safeParse(req.body);
@@ -139,7 +140,7 @@ router.patch("/races/:id", async (req, res) => {
   return res.json({ ...race, safetyCarDeployed: race.safetyCarDeployed ?? false, vscDeployed: race.vscDeployed ?? false });
 });
 
-router.delete("/races/:id", async (req, res) => {
+router.delete("/races/:id", adminAuthMiddleware, async (req, res) => {
   const parsed = DeleteRaceParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(racesTable).where(eq(racesTable.id, parsed.data.id));

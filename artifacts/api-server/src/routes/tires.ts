@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { tireStrategiesTable, driversTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { ListTireStrategiesParams, AddTireStrategyParams, AddTireStrategyBody } from "@workspace/api-zod";
+import { adminAuthMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
@@ -26,7 +27,7 @@ router.get("/races/:id/tires", async (req, res) => {
   return res.json(rows.map(r => ({ ...r, driverName: r.driverName ?? "" })));
 });
 
-router.post("/races/:id/tires", async (req, res) => {
+router.post("/races/:id/tires", adminAuthMiddleware, async (req, res) => {
   const idParsed = AddTireStrategyParams.safeParse({ id: Number(req.params.id) });
   if (!idParsed.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = AddTireStrategyBody.safeParse(req.body);

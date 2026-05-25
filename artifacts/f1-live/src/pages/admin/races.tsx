@@ -8,46 +8,91 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { Plus } from "lucide-react";
 
 export default function AdminRaces() {
   const { data: races } = useListRaces();
   const updateRace = useUpdateRace();
+  const createRace = useCreateRace();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
+  const [isNewRaceOpen, setIsNewRaceOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    circuit: "",
+    country: "",
+    round: 1,
+    season: new Date().getFullYear(),
+    raceDate: format(new Date(), "yyyy-MM-dd"),
+    totalLaps: 50,
+  });
+
   const updateFnRef = useRef(updateRace.mutate);
   updateFnRef.current = updateRace.mutate;
 
   const handleStatusChange = (id: number, status: any) => {
     updateFnRef.current(
       { id, data: { status } },
-      { 
+      {
         onSuccess: () => {
           toast({ title: "Status updated" });
           queryClient.invalidateQueries({ queryKey: getListRacesQueryKey() });
-        }
+        },
       }
     );
   };
 
-  const handleToggle = (id: number, field: 'safetyCarDeployed' | 'vscDeployed', checked: boolean) => {
+  const handleToggle = (id: number, field: "safetyCarDeployed" | "vscDeployed", checked: boolean) => {
     updateFnRef.current(
       { id, data: { [field]: checked } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListRacesQueryKey() });
-        }
+        },
       }
     );
+  };
+
+  const handleCreateRace = () => {
+    if (!formData.name || !formData.circuit || !formData.country) {
+      toast({ title: "Please fill all required fields", variant: "destructive" });
+      return;
+    }
+
+    createRace.mutate(formData as any, {
+      onSuccess: () => {
+        toast({ title: "Race created" });
+        queryClient.invalidateQueries({ queryKey: getListRacesQueryKey() });
+        setIsNewRaceOpen(false);
+        setFormData({
+          name: "",
+          circuit: "",
+          country: "",
+          round: 1,
+          season: new Date().getFullYear(),
+          raceDate: format(new Date(), "yyyy-MM-dd"),
+          totalLaps: 50,
+        });
+      },
+      onError: () => {
+        toast({ title: "Failed to create race", variant: "destructive" });
+      },
+    });
   };
 
   return (
     <div className="space-y-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-widest uppercase">Manage Races</h1>
-        <Button variant="default" size="sm" className="font-bold tracking-widest uppercase">New Race</Button>
+        <Button onClick={() => setIsNewRaceOpen(true)} variant="default" size="sm" className="font-bold tracking-widest uppercase">
+          <Plus className="w-4 h-4 mr-2" />
+          New Race
+        </Button>
       </div>
 
       <Card className="bg-card border-border/50">
@@ -115,6 +160,90 @@ export default function AdminRaces() {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={isNewRaceOpen} onOpenChange={setIsNewRaceOpen}>
+        <DialogContent className="bg-card border-border/50">
+          <DialogHeader>
+            <DialogTitle className="tracking-widest uppercase">New Race</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-xs font-bold uppercase">Race Name *</Label>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Monaco Grand Prix"
+                className="bg-input border-border/50"
+              />
+            </div>
+            <div>
+              <Label className="text-xs font-bold uppercase">Circuit *</Label>
+              <Input
+                value={formData.circuit}
+                onChange={(e) => setFormData({ ...formData, circuit: e.target.value })}
+                placeholder="e.g., Circuit de Monaco"
+                className="bg-input border-border/50"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs font-bold uppercase">Country *</Label>
+                <Input
+                  value={formData.country}
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  placeholder="e.g., Monaco"
+                  className="bg-input border-border/50"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-bold uppercase">Round</Label>
+                <Input
+                  type="number"
+                  value={formData.round}
+                  onChange={(e) => setFormData({ ...formData, round: parseInt(e.target.value) })}
+                  min={1}
+                  className="bg-input border-border/50"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs font-bold uppercase">Season</Label>
+                <Input
+                  type="number"
+                  value={formData.season}
+                  onChange={(e) => setFormData({ ...formData, season: parseInt(e.target.value) })}
+                  min={2000}
+                  className="bg-input border-border/50"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-bold uppercase">Race Date</Label>
+                <Input
+                  type="date"
+                  value={formData.raceDate}
+                  onChange={(e) => setFormData({ ...formData, raceDate: e.target.value })}
+                  className="bg-input border-border/50"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs font-bold uppercase">Total Laps</Label>
+              <Input
+                type="number"
+                value={formData.totalLaps}
+                onChange={(e) => setFormData({ ...formData, totalLaps: parseInt(e.target.value) })}
+                min={1}
+                className="bg-input border-border/50"
+              />
+            </div>
+            <div className="flex gap-2 justify-end pt-4">
+              <Button variant="outline" onClick={() => setIsNewRaceOpen(false)}>Cancel</Button>
+              <Button onClick={handleCreateRace} className="font-bold uppercase">Create Race</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

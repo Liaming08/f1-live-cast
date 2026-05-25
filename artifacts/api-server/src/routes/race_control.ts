@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { raceControlTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { ListRaceControlParams, AddRaceControlParams, AddRaceControlBody } from "@workspace/api-zod";
+import { adminAuthMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.get("/races/:id/race-control", async (req, res) => {
   return res.json(entries.map(e => ({ ...e, timestamp: e.timestamp.toISOString() })));
 });
 
-router.post("/races/:id/race-control", async (req, res) => {
+router.post("/races/:id/race-control", adminAuthMiddleware, async (req, res) => {
   const idParsed = AddRaceControlParams.safeParse({ id: Number(req.params.id) });
   if (!idParsed.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = AddRaceControlBody.safeParse(req.body);

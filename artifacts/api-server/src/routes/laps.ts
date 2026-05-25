@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { lapTimesTable, driversTable, teamsTable, tireStrategiesTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { ListLapsParams, AddLapParams, AddLapBody, GetLatestPositionsParams } from "@workspace/api-zod";
+import { adminAuthMiddleware } from "../middlewares/auth";
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.get("/races/:id/laps", async (req, res) => {
   })));
 });
 
-router.post("/races/:id/laps", async (req, res) => {
+router.post("/races/:id/laps", adminAuthMiddleware, async (req, res) => {
   const idParsed = AddLapParams.safeParse({ id: Number(req.params.id) });
   if (!idParsed.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = AddLapBody.safeParse(req.body);
