@@ -1,4 +1,4 @@
 {
-  "buildCommand": "pnpm -w install --prod=false && pnpm -r --filter './artifacts/f1-live' run build",
+  "buildCommand": "pnpm -w install --prod=false && pnpm -w exec -- vite --config artifacts/f1-live/vite.config.ts build",
   "installCommand": "pnpm -w install --prod=false"
 }
